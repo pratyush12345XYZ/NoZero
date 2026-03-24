@@ -12,7 +12,7 @@ import { Input } from './components/Input';
 import { Button } from './components/Button';
 import { Toggle } from './components/Toggle';
 import { storage } from './services/storage';
-import type { Habit, UserProfile, Screen, ThemeConfig, Friend, LogDetail, GroupStreak, GroupMember, Notification } from './types';
+import type { Habit, UserProfile, Screen, ThemeConfig, Friend, GroupStreak, GroupMember } from './types';
 import { ICONS } from './constants';
 import { format } from 'date-fns';
 

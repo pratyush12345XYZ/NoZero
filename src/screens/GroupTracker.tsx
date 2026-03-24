@@ -27,7 +27,6 @@ export const GroupTracker: React.FC<GroupTrackerProps> = ({
   onRemoveMember
 }) => {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
   const [editName, setEditName] = useState(group.name);
   const [editEndDate, setEditEndDate] = useState(group.endDate || '');
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
@@ -59,7 +58,6 @@ export const GroupTracker: React.FC<GroupTrackerProps> = ({
         name: editName,
         endDate: editEndDate
     });
-    setIsEditing(false);
     setIsSettingsOpen(false);
   };
 
@@ -132,7 +130,7 @@ export const GroupTracker: React.FC<GroupTrackerProps> = ({
         <div className="flex-1 overflow-y-auto mb-8 animate-slide-up" style={{ animationDelay: '0.1s' }}>
             <h3 className="text-sm opacity-50 uppercase tracking-widest mb-4">Members</h3>
             <div className="flex flex-col gap-3">
-                {memberStats.map((member, idx) => (
+                {memberStats.map((member) => (
                     <div key={member.userId} className="p-4 bg-current/5 rounded-2xl flex items-center justify-between border border-current/5">
                         <div className="flex items-center gap-3">
                              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-white text-xs font-bold">

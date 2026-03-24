@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ICONS } from '../constants';
-import { format, addMonths, endOfMonth, endOfWeek, addDays, isSameMonth, isSameDay, isToday, isValid } from 'date-fns';
+import { format, addMonths, endOfMonth, endOfWeek, addDays, isSameMonth, isToday, isValid } from 'date-fns';
 import { Modal } from './Modal';
 import { Input } from './Input';
 
