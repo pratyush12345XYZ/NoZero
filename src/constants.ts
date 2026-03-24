@@ -1,0 +1,53 @@
+import { 
+  Plus, 
+  ChevronLeft, 
+  Settings, 
+  MoreVertical, 
+  Trash2, 
+  Edit3, 
+  Calendar,
+  Check,
+  X,
+  Moon,
+  Sun,
+  Home,
+  BarChart2,
+  Users,
+  UserMinus,
+  LogOut,
+  Trophy,
+  Crown,
+  Info,
+  Bell,
+  UserPlus,
+  Search,
+  Eye
+} from 'lucide-react';
+
+export const ICONS = {
+  Plus,
+  Back: ChevronLeft,
+  Settings,
+  Menu: MoreVertical,
+  Delete: Trash2,
+  Edit: Edit3,
+  Calendar,
+  Check,
+  Close: X,
+  Moon,
+  Sun,
+  Home,
+  Analysis: BarChart2,
+  Friends: Users,
+  RemoveFriend: UserMinus,
+  LogOut,
+  Trophy,
+  Crown,
+  Info,
+  Bell,
+  UserPlus,
+  Search,
+  Eye
+};
+
+export const ANIMATION_EASE = [0.34, 1.56, 0.64, 1]; // Custom cubic-bezier
