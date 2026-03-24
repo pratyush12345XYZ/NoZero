@@ -127,6 +127,13 @@ export const Tracker: React.FC<TrackerProps> = ({ habit, onBack, onToggleLog, on
   const circumference = 2 * Math.PI * 50; // Radius 50
 
   const handleDayClick = (date: Date) => {
+    const today = new Date();
+    
+    if (!isSameDay(date, today)) {
+        alert("You can only check off habits for today (12AM to 12AM)!");
+        return;
+    }
+
     const dateStr = format(date, 'yyyy-MM-dd');
     const endDate = habit.endDate ? parseDate(habit.endDate) : null;
     
