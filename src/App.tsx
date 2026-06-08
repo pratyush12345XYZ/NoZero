@@ -130,23 +130,28 @@ const App: React.FC = () => {
     if (!profile?.email) return;
 
     const syncToDb = async () => {
-       const appData = {
-          habits,
-          vaultHabits,
-          groupStreaks,
-          profile,
-          theme,
-          vaultPassword
-       };
+       try {
+         const appData = {
+            habits,
+            vaultHabits,
+            groupStreaks,
+            profile,
+            theme,
+            vaultPassword
+         };
 
-       const { supabase } = await import('./services/db');
-       const { error } = await supabase
-          .from('users')
-          .update({ app_data: appData })
-          .eq('phone_number', profile.email);
-          
-       if (error) {
-          console.error("Failed to sync to database:", error);
+         const { supabase } = await import('./services/db');
+         const { error } = await supabase
+            .from('users')
+            .update({ app_data: appData })
+            .eq('phone_number', profile.email);
+
+         if (error) {
+            console.warn('[sync] Failed to sync to database:', error.message);
+         }
+       } catch (e) {
+         // Network is down — data is already saved to localStorage, so this is safe to ignore
+         console.warn('[sync] Network unavailable, skipping cloud sync:', (e as Error).message);
        }
     };
 
@@ -340,49 +345,62 @@ const App: React.FC = () => {
       const lowerQuery = query.toLowerCase().trim();
       if (lowerQuery.length < 2) return [];
 
-      const { supabase } = await import('./services/db');
-      const { data, error } = await supabase
-         .from('users')
-         .select('username')
-         .ilike('username', `%${lowerQuery}%`)
-         .limit(5);
+      try {
+        const { supabase } = await import('./services/db');
+        const { data, error } = await supabase
+           .from('users')
+           .select('username')
+           .ilike('username', `%${lowerQuery}%`)
+           .limit(5);
 
-      if (error || !data) {
-         console.error("Search error:", error);
-         return [];
+        if (error || !data) {
+           console.warn('[search] Search error:', error?.message);
+           return [];
+        }
+
+        // Return usernames, excluding the current user
+        return data.map((u: { username: string }) => u.username).filter((u: string) => u !== profile?.username);
+      } catch (e) {
+        console.warn('[search] Network unavailable, user search skipped:', (e as Error).message);
+        return [];
       }
-
-      // Return usernames, excluding the current user
-      return data.map(u => u.username).filter(u => u !== profile?.username);
   };
 
   const handleSendFriendRequest = async (username: string) => {
-      const { supabase } = await import('./services/db');
-      
-      // Fetch their real data from Supabase!
-      const { data, error } = await supabase
-          .from('users')
-          .select('app_data')
-          .eq('username', username)
-          .single();
+      try {
+        const { supabase } = await import('./services/db');
 
-      if (error || !data) return false;
+        // Fetch their real data from Supabase!
+        const { data, error } = await supabase
+            .from('users')
+            .select('app_data')
+            .eq('username', username)
+            .single();
 
-      const realHabits = data.app_data?.habits || [];
+        if (error || !data) {
+          console.warn('[friends] Could not fetch friend data:', error?.message);
+          return false;
+        }
 
-      const newFriend: Friend = {
-          id: Date.now().toString(),
-          username: username,
-          name: username.charAt(0).toUpperCase() + username.slice(1),
-          habits: realHabits
-      };
+        const realHabits = data.app_data?.habits || [];
 
-      setProfile(prev => prev ? {
-          ...prev,
-          friends: [...prev.friends, newFriend]
-      } : prev);
+        const newFriend: Friend = {
+            id: Date.now().toString(),
+            username: username,
+            name: username.charAt(0).toUpperCase() + username.slice(1),
+            habits: realHabits
+        };
 
-      return true;
+        setProfile(prev => prev ? {
+            ...prev,
+            friends: [...prev.friends, newFriend]
+        } : prev);
+
+        return true;
+      } catch (e) {
+        console.warn('[friends] Network unavailable, friend request failed:', (e as Error).message);
+        return false;
+      }
   };
 
   const handleAcceptFriendRequest = (notificationId: string, fromUser: string) => {
