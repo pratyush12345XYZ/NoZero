@@ -2,13 +2,18 @@ import { createClient } from '@supabase/supabase-js';
 
 // Read from environment variables (set in Render dashboard or .env file)
 // Falls back to the original hardcoded values if env vars are not set
+const envUrl = import.meta.env.VITE_SUPABASE_URL;
+const envKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
 const supabaseUrl =
-  import.meta.env.VITE_SUPABASE_URL ||
-  'https://oiavrhipgprwfmbaqfdx.supabase.co';
+  envUrl && envUrl.startsWith('http')
+    ? envUrl
+    : 'https://oiavrhipgprwfmbaqfdx.supabase.co';
 
 const supabaseKey =
-  import.meta.env.VITE_SUPABASE_ANON_KEY ||
-  'sb_publishable_spd3qPw2v1MoIh7qmjSe_A_kwTtzbW9';
+  envKey && !envKey.startsWith('YOUR_')
+    ? envKey
+    : 'sb_publishable_spd3qPw2v1MoIh7qmjSe_A_kwTtzbW9';
 
 export const supabase = createClient(supabaseUrl, supabaseKey);
 

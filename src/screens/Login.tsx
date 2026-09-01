@@ -58,6 +58,10 @@ export const Login: React.FC<LoginProps> = ({ onLogin }) => {
           .eq('phone_number', phone)
           .single();
 
+        if (dbError && isConnectionError(dbError)) {
+          throw dbError;
+        }
+
         if (dbError || !data) {
           setError('Phone number not found. Please sign up.');
           setIsLoading(false);
@@ -74,11 +78,15 @@ export const Login: React.FC<LoginProps> = ({ onLogin }) => {
 
       } else {
         // Sign up
-        const { data: existingPhone } = await supabase
+        const { data: existingPhone, error: phoneError } = await supabase
           .from('users')
           .select('*')
           .eq('phone_number', phone)
           .maybeSingle();
+
+        if (phoneError && isConnectionError(phoneError)) {
+          throw phoneError;
+        }
 
         if (existingPhone) {
           setError('Phone number already registered. Please sign in or use another number to sign up.');
@@ -86,11 +94,15 @@ export const Login: React.FC<LoginProps> = ({ onLogin }) => {
           return;
         }
 
-        const { data: existingUsername } = await supabase
+        const { data: existingUsername, error: usernameError } = await supabase
           .from('users')
           .select('*')
           .eq('username', username)
           .maybeSingle();
+
+        if (usernameError && isConnectionError(usernameError)) {
+          throw usernameError;
+        }
 
         if (existingUsername) {
           setError('Username is already taken. Please choose another one.');
@@ -103,6 +115,9 @@ export const Login: React.FC<LoginProps> = ({ onLogin }) => {
           .insert([{ phone_number: phone, username: username }]);
 
         if (insertError) {
+          if (isConnectionError(insertError)) {
+            throw insertError;
+          }
           setError('Error creating account. Try again.');
           setIsLoading(false);
           return;
