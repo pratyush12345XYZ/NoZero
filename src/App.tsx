@@ -8,6 +8,7 @@ import { Friends } from './screens/Friends';
 import { GroupTracker } from './screens/GroupTracker';
 import { Modal } from './components/Modal';
 import { CalendarModal } from './components/CalendarModal';
+import { Navigation } from './components/Navigation';
 import { Input } from './components/Input';
 import { Button } from './components/Button';
 import { Toggle } from './components/Toggle';
@@ -642,61 +643,35 @@ const App: React.FC = () => {
         )}
 
         {screen === 'HUB' && (
-          <>
-            <Hub 
-              habits={currentHabits}
-              profileName={profile?.name}
-              isVaultMode={isVaultMode}
-              notifications={profile?.notifications || []}
-              onExitVault={() => setIsVaultMode(false)}
-              onSelectHabit={(id) => { setActiveHabitId(id); setScreen('TRACKER'); }}
-              onCreateHabit={openCreateModal}
-              onOpenSettings={() => setIsSettingsOpen(true)}
-              onDeleteHabit={initiateDelete}
-              onEditHabit={openEditModal}
-              onOpenNotifications={() => setIsNotificationsOpen(true)}
-            />
-            {/* Bottom Nav for Analysis / Friends (Only visible on HUB) */}
-            <div className="fixed bottom-0 left-0 right-0 z-10 flex justify-center pb-6 pt-10 bg-gradient-to-t from-black/80 to-transparent pointer-events-none max-w-[440px] mx-auto">
-                <div className="pointer-events-auto bg-black/80 backdrop-blur-xl border border-white/10 rounded-full p-2 flex gap-4 text-white">
-                    <button onClick={() => setScreen('HUB')} className="p-2 rounded-full bg-white/10 text-white flex items-center justify-center">
-                        <ICONS.Home size={20} />
-                    </button>
-                    <button onClick={() => setScreen('ANALYSIS')} className="p-2 rounded-full hover:bg-white/10 text-white/50 hover:text-white flex items-center justify-center">
-                        <ICONS.Analysis size={20} />
-                    </button>
-                    <button onClick={() => setScreen('FRIENDS')} className="p-2 rounded-full hover:bg-white/10 text-white/50 hover:text-white flex items-center justify-center">
-                        <ICONS.Friends size={20} />
-                    </button>
-                </div>
-            </div>
-          </>
+          <Hub 
+            habits={currentHabits}
+            profileName={profile?.name}
+            isVaultMode={isVaultMode}
+            notifications={profile?.notifications || []}
+            onExitVault={() => setIsVaultMode(false)}
+            onSelectHabit={(id) => { setActiveHabitId(id); setScreen('TRACKER'); }}
+            onCreateHabit={openCreateModal}
+            onOpenSettings={() => setIsSettingsOpen(true)}
+            onDeleteHabit={initiateDelete}
+            onEditHabit={openEditModal}
+            onOpenNotifications={() => setIsNotificationsOpen(true)}
+          />
         )}
 
         {screen === 'ANALYSIS' && profile && (
-            <>
-                <Analysis habits={habits} username={profile.username} />
-                <div className="fixed bottom-8 left-0 right-0 z-20 flex justify-center pointer-events-none max-w-[440px] mx-auto">
-                    <Button variant="secondary" onClick={() => setScreen('HUB')} className="pointer-events-auto shadow-2xl rounded-full px-6">Back to Hub</Button>
-                </div>
-            </>
+          <Analysis habits={habits} username={profile.username} />
         )}
 
         {screen === 'FRIENDS' && profile && (
-            <>
-                <Friends 
-                    friends={profile.friends} 
-                    groups={groupStreaks}
-                    onSearchUsers={handleSearchUsers}
-                    onSendRequest={handleSendFriendRequest}
-                    onRemoveFriend={handleRemoveFriend}
-                    onCreateGroup={handleCreateGroup}
-                    onSelectGroup={(g) => { setActiveGroupId(g.id); setScreen('GROUP_TRACKER'); }}
-                />
-                <div className="fixed bottom-8 left-0 right-0 z-20 flex justify-center pointer-events-none max-w-[440px] mx-auto">
-                    <Button variant="secondary" onClick={() => setScreen('HUB')} className="pointer-events-auto shadow-2xl rounded-full px-6">Back to Hub</Button>
-                </div>
-            </>
+          <Friends 
+              friends={profile.friends} 
+              groups={groupStreaks}
+              onSearchUsers={handleSearchUsers}
+              onSendRequest={handleSendFriendRequest}
+              onRemoveFriend={handleRemoveFriend}
+              onCreateGroup={handleCreateGroup}
+              onSelectGroup={(g) => { setActiveGroupId(g.id); setScreen('GROUP_TRACKER'); }}
+          />
         )}
 
         {screen === 'TRACKER' && activeHabit && (
@@ -711,15 +686,20 @@ const App: React.FC = () => {
         )}
 
         {screen === 'GROUP_TRACKER' && activeGroup && profile && (
-            <GroupTracker 
-                group={activeGroup}
-                currentUserUsername={profile.username}
-                onBack={() => setScreen('FRIENDS')}
-                onToggleLog={handleGroupToggleLog}
-                onUpdateGroup={handleUpdateGroup}
-                onDeleteGroup={handleDeleteGroup}
-                onRemoveMember={handleRemoveGroupMember}
-            />
+          <GroupTracker 
+              group={activeGroup}
+              currentUserUsername={profile.username}
+              onBack={() => setScreen('FRIENDS')}
+              onToggleLog={handleGroupToggleLog}
+              onUpdateGroup={handleUpdateGroup}
+              onDeleteGroup={handleDeleteGroup}
+              onRemoveMember={handleRemoveGroupMember}
+          />
+        )}
+
+        {/* Global Bottom Navigation */}
+        {screen !== 'LOGIN' && screen !== 'ONBOARDING' && profile && (
+          <Navigation currentScreen={screen} onNavigate={(s) => setScreen(s)} />
         )}
 
         {/* Universal Create/Edit Modal */}

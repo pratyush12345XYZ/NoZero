@@ -177,7 +177,7 @@ export const Tracker: React.FC<TrackerProps> = ({ habit, onBack, onToggleLog, on
   }
 
   return (
-    <div className="min-h-screen text-inherit animate-fade-in pb-10">
+    <div className="min-h-screen text-inherit animate-fade-in pb-28">
       {/* Sticky Header */}
       <header 
         className="fixed top-0 left-0 right-0 z-20 flex justify-between items-center p-6 backdrop-blur-xl max-w-[440px] mx-auto border-b border-current/5"
