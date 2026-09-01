@@ -76,6 +76,9 @@ const App: React.FC = () => {
   const [formEnd, setFormEnd] = useState('');
   const [formHardcore, setFormHardcore] = useState(false);
 
+  const todayStr = format(new Date(), 'yyyy-MM-dd');
+  const isStartDateLocked = modalMode === 'EDIT' && formStart <= todayStr;
+
   // --- EFFECTS ---
   useEffect(() => {
     const savedProfile = storage.getProfile();
@@ -241,7 +244,7 @@ const App: React.FC = () => {
         return prevList.map(h => h.id === editingHabitId ? {
           ...h,
           name: formName,
-          startDate: h.startDate, // Strict lock
+          startDate: isStartDateLocked ? h.startDate : formStart,
           endDate: formEnd || undefined,
           isHardcore: formHardcore // Allow toggling hardcore later? Prompt doesn't forbid it.
         } : h);
@@ -597,7 +600,6 @@ const App: React.FC = () => {
   const currentHabits = isVaultMode ? vaultHabits : habits;
   const activeHabit = currentHabits.find(h => h.id === activeHabitId);
   const activeGroup = groupStreaks.find(g => g.id === activeGroupId);
-  const isStartDateLocked = modalMode === 'EDIT';
 
   return (
     <div className={`
