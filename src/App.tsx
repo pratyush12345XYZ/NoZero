@@ -14,7 +14,7 @@ import { Toggle } from './components/Toggle';
 import { storage } from './services/storage';
 import type { Habit, UserProfile, Screen, ThemeConfig, Friend, GroupStreak, GroupMember } from './types';
 import { ICONS } from './constants';
-import { format } from 'date-fns';
+import { format, addDays } from 'date-fns';
 
 // Helper to replace parseISO
 const parseLocalDate = (dateStr: string) => {
@@ -76,8 +76,10 @@ const App: React.FC = () => {
   const [formEnd, setFormEnd] = useState('');
   const [formHardcore, setFormHardcore] = useState(false);
 
+  const currentHabits = isVaultMode ? vaultHabits : habits;
+  const editingHabit = currentHabits.find(h => h.id === editingHabitId);
   const todayStr = format(new Date(), 'yyyy-MM-dd');
-  const isStartDateLocked = modalMode === 'EDIT' && formStart <= todayStr;
+  const isStartDateLocked = modalMode === 'EDIT' && (!editingHabit || editingHabit.startDate <= todayStr);
 
   // --- EFFECTS ---
   useEffect(() => {
@@ -597,7 +599,6 @@ const App: React.FC = () => {
   };
 
   // Render Data
-  const currentHabits = isVaultMode ? vaultHabits : habits;
   const activeHabit = currentHabits.find(h => h.id === activeHabitId);
   const activeGroup = groupStreaks.find(g => g.id === activeGroupId);
 
@@ -1043,7 +1044,13 @@ const App: React.FC = () => {
               calendarTarget === 'END' ? 'Select End Date' :
               'Extend Streak To'
            }
-           minDate={calendarTarget === 'END' || calendarTarget === 'EXTEND' ? formStart : undefined}
+           minDate={
+             calendarTarget === 'END' || calendarTarget === 'EXTEND' 
+               ? formStart 
+               : (calendarTarget === 'START' && modalMode === 'EDIT' 
+                   ? format(addDays(new Date(), 1), 'yyyy-MM-dd') 
+                   : undefined)
+           }
         />
 
       </div>

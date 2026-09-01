@@ -33,8 +33,14 @@ export const Input: React.FC<InputProps> = ({
         {Icon && (
           <button
             type="button"
-            onClick={onIconClick}
-            className="absolute right-4 top-1/2 -translate-y-1/2 opacity-50 hover:opacity-100 transition-opacity"
+            onClick={(e) => {
+              if (onIconClick) {
+                onIconClick();
+              } else if (props.onClick) {
+                props.onClick(e as any);
+              }
+            }}
+            className="absolute right-4 top-1/2 -translate-y-1/2 opacity-50 hover:opacity-100 transition-opacity disabled:cursor-not-allowed"
             disabled={props.disabled}
           >
             <Icon size={20} />
